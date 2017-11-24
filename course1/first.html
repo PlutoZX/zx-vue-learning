@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Vue first</title>
+    <script src="https://unpkg.com/vue"></script>
+</head>
+<body>
+
+    <div id="app">
+        {{ message }}
+    </div>
+
+    <div id="app2" v-bind:title="message">
+        悬停看信息
+    </div>
+
+    <div id="app3" v-if="seen">
+        现在你看到我了
+    </div>
+
+    <div id="app4">
+        <ol>
+            <li v-for="item in items">
+                {{ item.name }}
+            </li>
+        </ol>
+    </div>
+
+    <div id="app5" v-on:click="reverseMessage">
+        <div>{{ message }}</div>
+        点我点我，快点我
+    </div>
+
+    <div id="app6">
+        <p>{{ message }}</p>
+        <input type="text" v-model="message">
+    </div>
+
+    <!-- 这里写的是数据从父组件流向子组件的桥接处 -->
+    <ol id="app7">
+        <zx-item
+        v-for="nameitem in namelist"
+        v-bind:itemdata="nameitem"
+        v-bind:key="nameitem.id">
+        </zx-item>
+    </ol>
+
+
+
+
+
+
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'hello word!'
+            }
+        });
+
+        var app2 = new Vue({
+            el: '#app2',
+            data: {
+                message: '页面加载于' + new Date().toLocaleString()
+            }
+        });
+
+        var app3 = new Vue({
+            el: '#app3',
+            data: {
+                seen: true
+            }
+        });
+
+        var app4 = new Vue({
+            el: '#app4',
+            data: {
+                items: [
+                    {name: 'zhaoxuan1'},
+                    {name: 'zhaoxuan2'},
+                    {name: 'zhaoxuan3'},
+                    {name: 'zhaoxuan4'}
+                ]
+            }
+        });
+
+        var app5 = new Vue({
+            el: '#app5',
+            data: {
+                message: 'lalala hehehe'
+            },
+            methods: {
+                reverseMessage: function(){
+                    this.message = this.message.split(' ').reverse().join(' ');
+                }
+            }
+        });
+
+        var app6 = new Vue({
+            el: '#app6',
+            data: {
+                message: 'lalala'
+            },
+            methods: {
+
+            }
+        });
+
+        Vue.component('zx-item', { // 对于一个组件来说，他只关心，props内传进来的数据，而不管外部的数据，内部操作都围绕props传进来的数据
+            props: ['itemdata'],
+            template: '<li>{{ itemdata.name }}</li>'
+        });
+
+        var app7 = new Vue({ // 父组件定义总的数据，然后在dom里向下传递
+            el: '#app7',
+            data: {
+                namelist: [
+                    {id: 0, name: 'lalala1'},
+                    {id: 1, name: 'lalala2'},
+                    {id: 2, name: 'lalala3'},
+                    {id: 3, name: 'lalala4'},
+                    {id: 4, name: 'lalala5'}
+                ]
+            }
+        })
+
+
+        // 子单元通过 props 接口实现了与父单元很好的解耦。
+        // 个人感觉，三个部分，父组件数据源，dom处数据单向传递，子组件基于props传进来的数据写逻辑
+
+    </script>
+</body>
+</html>
