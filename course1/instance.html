@@ -28,6 +28,16 @@
         <!--{{ var a = 1 }}-->
         <!-- 流控制也不会生效，请使用三元表达式 -->
         <!--{{ if (ok) { return message } }} &ndash;&gt;-->
+
+        <!--指令的职责是，当表达式的值改变时，将其产生的连带影响，响应式地作用于 DOM。-->
+        <p v-if="seen" v-on:click="doSomthing">现在你看到我了</p>
+
+        <!-- 修饰符 (Modifiers) 是以半角句号 . 指明的特殊后缀，用于指出一个指令应该以特殊方式绑定。 -->
+        <form action="" v-on:submit.prevent="onSubmit"><input type="submit" value="提交"></form>
+
+        <!-- v-bind v-on 缩写 -->
+        <a :href="url">v-bind缩写</a>
+        <a @click="doSomthing">v-bind缩写</a>
     </div>
 
 
@@ -39,7 +49,15 @@
         b: 'lalala',
         rawHtml: '<span>啦啦啦这是个标签哦</span>',
         itemid: 'duduu',
-        isDisabled: true
+        isDisabled: true,
+        seen: true,
+        url: 'http://www.baidu.com',
+        doSomthing: function(){
+            alert(1);
+        },
+        onSubmit: function(){
+            alert('提交表单')
+        }
     };
     var vm = new Vue({
         el: '#example',
