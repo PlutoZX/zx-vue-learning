@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Vue first</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+
+    <div id="example">
+        <!-- 差值语法适用于文本插入，不适用于属性等插入 -->
+        <p>{{ a }}</p>
+        <!-- 不响应式 -->
+        <p v-once>{{ b }}</p>
+        <!--直接作为 HTML——会忽略解析属性值中的数据绑定。注意，你不能使用 v-html 来复合局部模板，因为 Vue 不是基于字符串的模板引擎。反之，对于用户界面 (UI)，组件更适合作为可重用和可组合的基本单位。-->
+        <p v-html="rawHtml"></p>
+        <!--Mustache 语法不能作用在 HTML 特性上，遇到这种情况应该使用 v-bind 指令：-->
+        <p v-bind:id="itemid">看我的id，是不是{{ itemid }}</p>
+        <!-- 符合标准，布尔值的属性，可能直接就不渲染了，而不是disabled='disabeld' -->
+        <input type="text" style="border: 1px solid #ccc" v-bind:disabled="isDisabled">
+        <!-- 绑定js表达式 -->
+        <p v-bind:data-type="'category_' + itemid">{{ itemid.split('').reverse().join('') }}</p>
+        <!-- 这些表达式会在所属 Vue 实例的数据作用域下作为 JavaScript 被解析。有个限制就是，每个绑定都只能包含单个表达式，所以下面的例子都不会生效。
+        <!-- 这是语句，不是表达式 -->
+        <!--{{ var a = 1 }}-->
+        <!-- 流控制也不会生效，请使用三元表达式 -->
+        <!--{{ if (ok) { return message } }} &ndash;&gt;-->
+    </div>
+
+
+
+
+<script>
+    var data = {
+        a: 1,
+        b: 'lalala',
+        rawHtml: '<span>啦啦啦这是个标签哦</span>',
+        itemid: 'duduu',
+        isDisabled: true
+    };
+    var vm = new Vue({
+        el: '#example',
+        data: data,
+        created: function(){
+            console.log('啦啦啦这个vm实例已经创建了');
+            console.log(this); // 生命周期钩子的 this 指向调用它的 Vue 实例
+        },
+        mounted: function(){
+            console.log('啦啦啦这个vm实例已经插入了');
+        },
+        updated: function(){
+            console.log('啦啦啦这个vm实例已经更新了');
+        },
+        destoryed: function(){
+            console.log('啦啦啦这个vm实例已经销毁了');
+        }
+    });
+
+    vm.$watch('a', function(newValue, oldValue){
+        console.log(newValue, oldValue);
+    });
+//    vm.$destroy();  // 个人理解，挺奇怪的，执行destory之后，vue实例用vm变量还是可以找到不是undefind，但是数据更新什么的已经不起作用了，
+
+
+    console.log(vm.a === data.a);
+    console.log(vm.$data === data);
+    console.log(vm.$el === document.getElementById('example'));
+    // 值得注意的是只有当实例被创建时 data 中存在的属性是响应式的。后添加的属性的改动将不会触发任何视图的更新。
+    // 如果你知道你会在晚些时候需要一个属性，但是一开始它为空或不存在，那么你仅需要设置一些初始值。
+
+
+
+</script>
+</body>
+</html>
