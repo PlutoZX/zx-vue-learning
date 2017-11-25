@@ -7,6 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Vue first</title>
     <script src="./vue-2.5.8.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
 </head>
 <body>
 
@@ -48,6 +50,13 @@
         <!-- 计算属性（computed）与 属性监听（watch） -->
         <p>{{ fullName1 }}</p>
         <p>{{ fullName2 }}</p>
+        <p>{{ fullName3 }}</p>
+        
+        
+        <!-- 更适合使用watch的场景 -->
+        <p>啦啦啦：<input type="text" v-model="question"/></p>
+        <p>{{ answer }}</p>
+        
     </div>
 
 
@@ -75,6 +84,8 @@
         firstName: 'xuan',
         lastName: 'zhao',
         fullName1: 'xuan zhao',
+        question: '',
+        answer: 'I cannot give you an answer until you ask a question!'
     };
 
 
@@ -104,6 +115,19 @@
             },
             fullName2: function(){ // 相比watch 多依赖写起来很爽
                 return this.firstName + ' ' + this.lastName;
+            },
+            fullName3: {
+                // 计算默认使用get，看看set怎么用，注意注意个人理解，计算属性取值只取决于它get方法的各个依赖的计算结果，不像data的属性可以直接赋值，计算属性直接赋值没用，直接赋值，取值时它还是会用之前依赖计算出来的缓存，而不是你赋的值
+                // 所以想要设置计算属性，就要在她的set方法里，改变她的get方法中的依赖的值，这样，她依赖就变了，她就会更新。
+                get: function(){
+                    return this.firstName + ' ' + this.lastName;
+                },
+                set: function(newv, oldv){ // 注意，set是set这个fullName3计算属性时，触发的函数
+                    var names = newv.split(' ');
+                    this.firstName = names[0];
+                    this.lastName = names[names.length - 1];
+
+                }
             }
         },
         watch: { // 相比计算属性 多依赖写起来较为重复
@@ -112,7 +136,32 @@
             },
             lastName: function(newv, oldv){
                 this.fullName1 = this.firstName + ' ' + newv;
+            },
+            question: function(newv, oldv){
+                this.answer = 'Waiting for you to stop typing...';
+                this.getAnswer();
             }
+        },
+        methods: {
+            getAnswer: _.debounce(function(){
+                if(this.question.indexOf('?') === -1){
+                    this.answer = 'Questions usually contain a question mark. ;-)';
+                    return
+                }
+                this.answer = 'Thinking...';
+                var vm = this;
+                axios.get('http://yesno.wtf/api', {
+                    params: {
+                        question: this.question
+                    }
+                })
+                .then(function(res){
+                    vm.answer = _.capitalize(res.data.answer);
+                })
+                .catch(function(err){
+                    vm.answer = 'Error!' + err;
+                })
+            }, 500)
         }
     });
 
