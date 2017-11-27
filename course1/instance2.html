@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Vue first</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+
+<div id="example">
+    <!-- 注意class可以不写引号，但是如果有连字符就必须用引号 -->
+    <div class="static" v-bind:class="classObj">啦啦啦啦</div>
+    <div class="static" v-bind:class="classObj2">啦啦啦啦</div>
+    <!-- 几种形式都可以 -->
+    <div class="static" v-bind:class="[classObj.isActive ? zxActive : '', zxError, { zxActive2 : classObj.isActive }]">嘟嘟嘟嘟</div>
+    <!-- 内联样式 连字符要用单引号 -->
+    <p v-bind:style="{color: actColor, 'font-size': fontSize + 'px', marginTop: marginTop + 'px'}">看这里是内联样式哦</p>
+    <p v-bind:style="styleObj">这里内联样式是一个对象</p>
+    <!-- 数组语法可以将多个样式对象应用到同一个元素上 -->
+    <p v-bind:style="[baseStyles, overridingStyles]">样式值是数组</p>
+</div>
+
+
+
+
+
+<script>
+
+    var data = {
+        classObj: {
+            isActive: true,
+            hasError: false
+        },
+        zxActive: 'zxlalala',
+        zxError: 'zxdududu',
+        actColor: 'tomato',
+        fontSize: 40,
+        marginTop: 20,
+        styleObj: {
+            color: 'chocolate',
+            fontSize: '50px',
+            'margin-top': '100px'
+        },
+        baseStyles: {
+            border: 'none'
+        },
+        overridingStyles: {
+            borderRadius: '50%',
+            transform: 'translate(-50%, 50%)'
+        }
+    };
+
+    var vm = new Vue({
+        el: '#example',
+        data: data,
+        computed: {
+            classObj2: function(){ // 我们也可以绑定一个返回对象的计算属性。这是一个常用且强大的模式：
+                return {
+                    active: this.classObj.isActive,
+                    'text-danger': this.classObj.hasError
+                }
+            }
+        }
+    });
+
+
+
+
+
+</script>
+</body>
+</html>
