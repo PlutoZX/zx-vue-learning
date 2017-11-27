@@ -11,6 +11,18 @@
 <body>
 
 <div id="example">
+    <h1 v-if="showh1">条件显示</h1>
+    <h1 v-if="showh2">showh2</h1>
+    <!-- v-else 元素必须紧跟在带 v-if 或者 v-else-if 的元素的后面，否则它将不会被识别。 他也只受最近的v-if影响-->
+    <h1 v-else>else显示</h1>
+
+
+    <!-- 因为 v-if 是一个指令，所以必须将它添加到一个元素上。但是如果想切换多个元素呢？此时可以把一个 <template> 元素当做不可见的包裹元素，并在上面使用 v-if。最终的渲染结果将不包含 <template> 元素。 -->
+    <template v-if="temshow">
+        <p v-if="type === 1">渲染出来的template元素是不存在的</p>
+        <p v-else-if="type === 2">temp2</p>
+        <p v-else="type === 3">temp3</p>
+    </template>
 
 </div>
 
@@ -21,7 +33,10 @@
 <script>
 
     var data = {
-
+        showh1: true,
+        showh2: false,
+        temshow: true,
+        type: 1
     };
 
 
@@ -32,6 +47,19 @@
     })
 
 
+
+
+
+
+
+
+
+
+
+
 </script>
 </body>
 </html>
+
+
+
