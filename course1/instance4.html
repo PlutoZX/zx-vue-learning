@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+<section id="example">
+    <ul>
+        <li v-for="(item, index) in items" :key="item.message">{{ item.message }} + {{ index }}</li>
+    </ul>
+    <input type="button" v-on:click="handleClick" value="只留四">
+    
+    
+    <!-- 对一个对象迭代 -->
+    <br>
+    <ul>
+        <li v-for="(value, key, index) in exobj">{{ key }} : {{ value }} : {{ index }}</li>
+    </ul>
+
+    <br>
+    <p>{{ evenNumber }}</p>
+
+    <br>
+    <!-- v-for和template一起用 -->
+    <template v-for="n in 10">
+        <p>我是{{ n }}个p<template v-for="m in 5"><span>第{{ n }}个p下的第{{ m }}个span</span></template></p>
+    </template>
+
+    <br>
+    <!-- v-for&v-if -->
+    <!-- 就是说如果v-if在v-for之前的外层，则先判断v-if可以跳过v-for，如果她俩同级，则是v-for优先即先遍历再判断 -->
+    <ul>
+        <li v-for="item in items" v-if="item.isShow">{{ item.message }}</li>
+    </ul>
+
+</section>
+
+
+
+
+<script>
+
+    var data = {
+        items: [
+            {
+                id: 0,
+                message: '一',
+                isShow: true
+            },
+            {
+                id: 1,
+                message: '二',
+                isShow: true
+            },
+            {
+                id: 2,
+                message: '三',
+                isShow: false
+            },
+            {
+                id: 3,
+                message: '四',
+                isShow: true
+            },
+            {
+                id: 4,
+                message: '五',
+                isShow: true
+            }
+        ],
+        numarr: [1,2,3,4,5,6],
+        exobj: {
+            name: 'zhaoxuan',
+            sex: 'man',
+            age: 30
+        }
+    };
+
+    var vm = new Vue({
+        el: '#example',
+        data:  data,
+        methods: {
+            handleClick: function(){
+                this.items = this.items.filter(function(item){
+                    return item.message.match(/四/);
+                })
+            },
+            even: function(){ // 在计算属性不适用的情况下 (例如，在嵌套 v-for 循环中) 你可以使用一个 method 方法：
+                return this.numarr.filter(function(item){
+                    return item % 2 === 0;
+                })
+            }
+        },
+        computed: {
+            evenNumber: function(){ // 有时，我们想要显示一个数组的过滤或排序副本，而不实际改变或重置原始数据。在这种情况下，可以创建返回过滤或排序数组的计算属性。
+                return this.numarr.filter(function(item){
+                    return item % 2 === 0;
+                })
+            }
+        }
+    });
+
+
+    // 由于 JavaScript 的限制，Vue 不能检测以下变动的数组：
+    // 当你利用索引直接设置一个项时，例如：vm.items[indexOfItem] = newValue
+    // 当你修改数组的长度时，例如：vm.items.length = newLength
+
+    // 注意注意我发现 直接改数组元素如：vm.items[0] = newValue 这样vue是检测不到的，但是如果改数组元素的内容，是可以检测到如：vm.item[0].message = newMes
+    // 为了解决第一类问题，以下两种方式都可以实现和 vm.items[indexOfItem] = newValue 相同的效果，同时也将触发状态更新：
+    // Vue.set
+    //    Vue.set(example1.items, indexOfItem, newValue)
+    // Array.prototype.splice 注意这里的splice应该不是原生的数组方法了，而是vue的变异方法会触发视图更新
+    //    example1.items.splice(indexOfItem, 1, newValue)
+
+
+    // 为了解决第二类问题，你可以使用 splice：    呃呃呃呃，尴尬，暂时没想到有什么需求要改length
+    // example1.items.splice(newLength)
+
+
+    // 还是由于 JavaScript 的限制，Vue 不能检测对象属性的添加或删除:    但是注意注意，修改已有属性是可以检测到的，会更新视图
+
+    // 对于已经创建的实例，Vue 不能动态添加根级别的响应式属性。但是，可以使用 Vue.set(object, key, value) 方法向嵌套对象添加响应式属性。
+
+
+    // vm.b = 1; // 这是错误的已经实例化的实例不能添加根级的响应式属性
+    // Vue.set(vm.exobj, 'b', 1); // 这是可以的
+    // 你还可以使用 vm.$set 实例方法，它只是全局 Vue.set 的别名：
+    // this.$set(this.exobj, 'b', 1);
+
+
+
+    // 有时你可能需要为   已有对象   赋予多个新属性，比如使用 Object.assign() 或 _.extend()。在这种情况下，你应该用两个对象的属性创建一个新的对象。所以，如果你想添加新的响应式属性，不要像这样：
+    // Object.assign(this.userProfile, {
+        // age: 27,
+        // favoriteColor: 'Vue Green'
+    // });
+    // 你应该这样做： 注意userProfile是已有属性
+    // this.userProfile = Object.assign({}, this.userProfile, {
+        // age: 27,
+        // favoriteColor: 'Vue Green'
+    // })
+
+
+
+    // <my-component v-for="item in items" :key="item.id"></my-component>
+    // 2.2.0+ 的版本里，当在组件中使用 v-for 时，key 现在是必须的。
+    // 然而，任何数据都不会被自动传递到组件里，因为组件有自己独立的作用域。为了把迭代数据传递到组件里，我们要用 props ：
+    // <my-component v-for="(item, index) in items" v-bind:item="item" v-bind:index="index" v-bind:key="item.id"></my-component>
+
+
+</script>
+</body>
+</html>
