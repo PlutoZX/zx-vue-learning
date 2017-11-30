@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+
+<section id="example">
+    <div>点击次数{{ count }}</div>
+    <button v-on:click="count++">点击加一</button>
+
+    <br>
+
+    <button v-on:click="handleClick1">点击触发方法1</button>
+    <button v-on:click="handleClick1('哈哈哈哈', $event)">点击触发方法1</button>
+    <br>
+
+    <!-- 更好的方式是：方法只有纯粹的数据逻辑，而不是去处理 DOM 事件细节。 -->
+    <div v-on:click="prop">
+        <span v-on:click="doThis">点击不阻止冒泡</span>
+        <span v-on:click.stop="doThis">点击stop冒泡</span>
+    </div>
+    <br>
+    <form v-on:submit.prevent="onSubmit"><input type="submit" value="提交表单阻止默认不刷新页面"></form>
+    <br>
+    <a href="http://www.baidu.com" v-on:click.stop.prevent="doThat">修饰符可以串联</a>
+    <br>
+    <form v-on:submit.prevent>
+        <input type="submit" value="只有修饰符">
+    </form>
+    <br>
+    <div v-on:click.capture="doThis">添加事件监听器时使用事件捕获模式 </div>
+    <br>
+    <p v-on:click.self="doThat">只当在 event.target 是当前元素自身时触发处理函数,<span>即事件不是从内部元素触发的</span></p>
+    <br>
+    <p v-on:click.once="doThis">只触发一次</p>
+
+    <!-- 使用修饰符时，顺序很重要；相应的代码会以同样的顺序产生。因此，用 @click.prevent.self 会阻止所有的点击，而 @click.self.prevent 只会阻止对元素自身的点击。 -->
+
+    <br>
+    <!-- 按键修饰符 -->
+    <input type="text" v-on:keyup.13="doThis" placeholder="敲回车有弹窗">
+    <!-- 可以通过全局 config.keyCodes 对象自定义按键修饰符别名 -->
+    <br>
+    <input type="text" v-on:keyup.z="doThis" placeholder="敲z键有弹窗">
+
+    <br>
+    <input type="text" v-on:keyup.alt.90="doThis" placeholder="按下alt和z弹窗">
+
+
+
+
+
+</section>
+
+
+<script>
+
+    var data = {
+        count: 0
+    };
+
+    var vm = new Vue({
+        el: '#example',
+        data: data,
+        methods: {
+            handleClick1: function(msg,event){
+                alert(msg);
+                console.log(event);
+            },
+            doThis: function(){
+                alert('doThis');
+            },
+            onSubmit: function(){
+                alert('submit');
+            },
+            doThat: function(){
+                alert('doThat');
+            },
+            prop: function(){
+                alert('prop');
+            }
+        }
+    });
+
+    // 也可以用 JavaScript 直接调用方法
+    // vm.handleClick1();
+
+    Vue.config.keyCodes.z = 90;
+
+
+
+
+</script>
+</body>
+</html>
