@@ -54,6 +54,51 @@
     <span>Array is {{ picked }}</span>
 </div>
 
+
+<div id="selectlist">
+    <select v-model="selectValue" multiple style="width: 50px;">
+        <option disabled value="">请选择</option>
+        <option value="AAAAAA">A</option>
+        <option value="BBBBBB">B</option>
+        <option value="CCCCCC">C</option>
+    </select>
+    <br>
+    <span>Selected:{{ selectValue }}</span>
+    <br>
+    <select v-model="selectfor">
+        <option v-for="option in selectitems" v-bind:value="option.value">{{ option.text }}</option>
+    </select>
+    <span>{{ selectfor }}</span>
+</div>
+
+<!-- 值绑定 -->
+<div id="example5">
+    <!-- 注意注意  v-bind里绑定的是个变量，所以还是要在实例里定义该变量的值，而不是直接在html里写值-->
+    <input type="checkbox" v-model="toggle" v-bind:true-value="a" v-bind:false-value="b">
+    <br>
+    <span>{{ toggle }}</span>
+    <br>
+    <input type="radio" v-model="radiob" v-bind:value="radiov1">
+    <input type="radio" v-model="radiob" v-bind:value="radiov2">
+    <span>{{ radiob }}</span>
+    <br>
+
+    <!-- lazy修饰符使同步输入由input事件改为change事件 trim去除前后空格-->
+    <input type="text" v-model.lazy.trim="msg1">
+    <br>
+    <span>{{ msg1 }}</span>
+    <br>
+    <!-- .number自动将用户的输入值转为 Number 类型 -->
+    <!-- 这通常很有用，因为在 type="number" 时 HTML 中输入的值也总是会返回字符串类型。 -->
+    <input type="number" v-model.number="msg2">
+    <br>
+    <span>{{ typeof(msg2) }}</span>
+</div>
+
+
+
+
+
 <script>
 
     var data = {
@@ -62,13 +107,10 @@
         checked: false
     };
 
-
     var vm = new Vue({
         el: '#example',
         data: data
     });
-
-
 
     var vm2 = new Vue({
         el: '#checkboxlist',
@@ -77,13 +119,39 @@
         }
     });
 
-
     var vm3 = new Vue({
         el: '#radiolist',
         data: {
             picked: ''
         }
-    })
+    });
+
+    var vm4 = new Vue({
+        el: '#selectlist',
+        data: {
+            selectValue: ['BBBBBB'],
+            selectfor: '',
+            selectitems: [
+                {text: 'A', value: 'dududu'},
+                {text: 'B', value: 'hahaha'},
+                {text: 'C', value: 'lalala'}
+            ]
+        }
+    });
+
+    var vm5 = new Vue({
+        el: '#example5',
+        data: {
+            toggle: '',
+            a: '是',
+            b: '非',
+            radiob: '',
+            radiov1: '啦啦啦啦',
+            radiov2: '嘟嘟嘟嘟',
+            msg1: '',
+            msg2: ''
+        }
+    });
 </script>
 </body>
 </html>
