@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+
+<section id="example">
+
+    <my-component></my-component>
+    <my-component2></my-component2>
+
+</section>
+
+
+<table id="example2">
+    <!-- 注意是谁is谁   原生 is vue组件 -->
+    <!-- 因为 Vue 只有在浏览器解析、规范化模板之后才能获取其内容。浏览器先解析出tr然后vue再去把这个tr替换掉成vue组件 -->
+    <tr is="my-row"></tr>
+</table>
+
+
+
+<section id="example3">
+    <my-component3></my-component3>
+    <my-component3></my-component3>
+    <my-component3></my-component3>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+    // 注意一定要确保在初始化根实例之前注册组件
+    // 这用在vue实例外的组件是全局的组件
+    Vue.component('my-component', {
+        template: '<div>啦啦啦啦这是我的第一个vue组件</div>'
+    });
+    // 这是局部组件的配置项，局部组件在vue实例内部定义
+    var childoptions = {
+        template: '<div>这是一个局部组件</div>'
+    };
+    var vm = new Vue({
+        el: '#example',
+        components: {
+            'my-component2': childoptions
+        }
+    });
+
+
+
+    // DOM 模板解析注意事项 以及 is 特性 有些标签内的元素有限制，因此在在这些标签内使用自定义组件需要is
+    // 尤其要注意，像 <ul>、<ol>、<table>、<select> 这样的元素里允许包含的元素有限制，而另一些像 <option> 这样的元素只能出现在某些特定元素的内部。
+    var myrowOption = {
+        template: '<tr><td>啦啦啦啦这是一个表格</td><td>嘟嘟嘟这是个表格</td></tr>'
+    };
+    var vm2 = new Vue({
+        el: '#example2',
+        components: {
+            'my-row': myrowOption
+        }
+    });
+
+
+
+    // 组件实例中的配置项 data 必须是一个函数
+    // 这是为了每个组件都有自己的内部状态 即 如果直接是一个对象，并且这个对象在外面定义了的话，所有组件实例都会共享同一个引用的对象，这样每个组件实例就没有自己独立的状态对象了
+    var data = {
+        counter: 0
+    };
+    var myOption3 = {
+        template: '<button v-on:click="counter += 1">{{ counter }}</button>',
+        data: function(){
+            return {
+                counter: 0
+            }
+        }
+    };
+    var vm3 = new Vue({
+        el: '#example3',
+        components: {
+            'my-component3': myOption3
+        }
+    });
+
+
+</script>
+
+
+</body>
+</html>
