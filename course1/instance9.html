@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+
+<section id="example">
+
+    <child1 v-bind="parentData"></child1>
+
+    <!-- 注意父组件传入的属性和自身的属性之间的 覆盖合并关系 class和style会合并 其它的大部分都会覆盖如type -->
+    <child3 type="file" class="parent-class"></child3>
+
+</section>
+
+
+
+<script>
+
+    Vue.component('child1', {
+        props: ['text', 'count', 'size'],
+        data: function(){
+            return { // 注意注意，data里返回的对象的属性都是子组件的属性，这里面已经默认包括了通过props传入的属性，所以子组件不能也不应该重新定义从props里接收的属性，如果text: 'bulabulabula'，这是不对的，因为text是props传入的属性不应被修改
+                childText: '这是子组件自己的值',
+                childCount: this.count // 定义一个局部变量，并用 prop 的值初始化它，并且不应该做变化，变化的应该用computed
+            }
+        },
+        computed: {
+            upsize: function(){
+                return this.size.trim().toUpperCase()
+            }
+        },
+        template: '<div><p>{{ text }}</p><p>{{ count }}</p><p>{{ childText }}</p><p>{{ childCount }}</p><p>{{ upsize }}</p></div>'
+    });
+
+
+    // 要指定验证规则，需要用对象的形式来定义 prop，而不能用字符串数组
+    Vue.component('child2', {
+        props: {
+            // 基础类型检测 (`null` 指允许任何类型)
+            propA: Number,
+            // 可能是多种类型
+            propB: [String, Number],
+            // 必传且是字符串
+            propC: {
+                type: String,
+                required: true
+            },
+            // 数值且有默认值
+            propD: {
+                type: Number,
+                default: 100
+            },
+            // 数组/对象的默认值应当由一个工厂函数返回
+            propE: {
+                type: Object,
+                default: function(){
+                    return {
+                        message: 'hello'
+                    }
+                }
+            },
+            // 自定义验证函数
+            propF: {
+                validator: function(value){
+                    return value > 1
+                }
+            }
+        }
+    });
+
+    Vue.component('child3', {
+        template: '<input type="date" class="self-class" />'
+    });
+
+    var vm = new Vue({
+        el: '#example',
+        data: {
+            parentData: {
+                text: '这是从父组件传入的数据',
+                count: 1,
+                size: 'big'
+            }
+        }
+    });
+
+
+
+
+    // Prop 是单向绑定的：当父组件的属性变化时，将传导给子组件，但是反过来不会。这是为了防止子组件无意间修改了父组件的状态，来避免应用的数据流变得难以理解。
+    // 另外，每次父组件更新时，子组件的所有 prop 都会更新为最新值。这意味着你不应该在子组件内部改变 prop。如果你这么做了，Vue 会在控制台给出警告。
+    // 在两种情况下，我们很容易忍不住想去修改 prop 中数据：
+    // Prop 作为初始值传入后，子组件想把它当作局部数据来用；
+    // Prop 作为原始数据传入，由子组件处理成其它数据输出。
+
+
+    // 注意在 JavaScript 中对象和数组是引用类型，指向同一个内存空间，如果 prop 是一个对象或数组，在子组件内部改变它会影响父组件的状态。
+</script>
+</body>
+</html>
