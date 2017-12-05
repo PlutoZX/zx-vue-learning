@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+
+
+<div id="example">
+    <p>{{ total }}</p>
+    <zx-button v-on:selfincrement="incremnetTotal"></zx-button>       <!-- 自定义事件事件名是自己取的 自定义事件是给子组件用的 而自定义事件对应的真正事件是父组件的-->
+    <zx-button v-on:selfincrement="incremnetTotal"></zx-button>       <!-- 注意注意 自定义事件名貌似不能用带大写的名字，因为html不认，都算小写，但是注册的事件名又是大写，就不会触发了 -->
+    <br>
+    <zx-click1></zx-click1>
+    <br>
+    <!-- 注意注意注意 v-model="price"是语法糖，等效于 v-bind:value="price" v-on:input="price = $event.target.value" -->
+    <!-- 也就是默认绑定value属性并注册input事件 v-model双向绑定要有输入一般用在输入框上都有value属性 -->
+    <p>{{ price }}</p>
+    <zx-input v-model="price"></zx-input>
+
+
+
+</div>
+
+
+
+
+
+
+
+<script>
+
+    // 使用 $on(eventName) 监听事件 使用 $emit(eventName) 触发事件
+    // 不能用 $on 侦听子组件释放的事件，而必须在模板里直接用 v-on 绑定，参见下面的例子。
+
+    Vue.component('zx-button', {
+        template: '<button v-on:click="incrementCounter">{{ counter }}</button>',
+        data: function(){
+            return {
+                counter: 0
+            }
+        },
+        methods: {
+            incrementCounter: function(){
+                this.counter += 1;
+                this.$emit('selfincrement'); // 在本例中，子组件已经和它外部完全解耦了。它所做的只是报告自己的内部事件，因为父组件可能会关心这些事件。
+            }
+        }
+    });
+
+    Vue.component('zx-click1', {
+        template: '<p v-on:click="dianwo">{{ text }}</p>',
+        data: function(){
+            return {
+                text: '点我点我点我点我'
+            }
+        },
+        methods: {
+            dianwo: function(){
+                alert('你真的点啊？');
+            }
+        }
+    });
+
+    Vue.component('zx-input', {
+        template: '<span>$<input ref="input" v-bind:value="value" v-on:input="updataValue($event.target.value)"></span>',
+        props: ['value'], // 这里为什么是value，看上面的注释
+        methods: {
+            updataValue: function(argument){
+                var formattedValue = argument.trim().slice(0,argument.indexOf('.')===-1?argument.length:argument.indexOf('.') + 3)
+                if(formattedValue !== argument){
+                    this.$refs.input.value = formattedValue;
+                }
+                this.$emit('input', Number(formattedValue));
+            }
+        }
+    });
+
+
+
+
+    new Vue({
+        el: '#example',
+        data: {
+            total: 0,
+            price: 100
+        },
+        methods: {
+            incremnetTotal: function(){
+                this.total += 1;
+            },
+            dianwo: function(){
+                alert('你小子敢点根元素？')
+            }
+        }
+    })
+
+
+
+</script>
+</body>
+</html>
