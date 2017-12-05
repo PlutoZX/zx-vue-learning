@@ -22,6 +22,10 @@
     <!-- 也就是默认绑定value属性并注册input事件 v-model双向绑定要有输入一般用在输入框上都有value属性 -->
     <p>{{ price }}</p>
     <zx-input v-model="price"></zx-input>
+    <br>
+    <input type="text" v-bind:value="price" v-on:input="price = $event.target.value">
+    <br>
+    <input type="text" v-model="price">
 
 
 
@@ -69,14 +73,15 @@
 
     Vue.component('zx-input', {
         template: '<span>$<input ref="input" v-bind:value="value" v-on:input="updataValue($event.target.value)"></span>',
-        props: ['value'], // 这里为什么是value，看上面的注释
+        // template: '<input type="text">', // 思考思考，虽然v-model是那两个等效的语法糖，但是直接把模板这么写，什么都不加只靠v-model貌似不起作用，说明放在子组件里和直接写等效的input还是有不同的。
+        props: ['value'], // 这里为什么是value，就是v-model等效的v-bind:value
         methods: {
             updataValue: function(argument){
-                var formattedValue = argument.trim().slice(0,argument.indexOf('.')===-1?argument.length:argument.indexOf('.') + 3)
+                var formattedValue = argument.trim().slice(0,argument.indexOf('.')===-1?argument.length:argument.indexOf('.') + 3);
                 if(formattedValue !== argument){
-                    this.$refs.input.value = formattedValue;
+                    this.$refs.input.value = formattedValue; // $refs.x可以取到上面用ref标记的元素
                 }
-                this.$emit('input', Number(formattedValue));
+                this.$emit('input', Number(formattedValue)); // 这里触发的也是v-model等效的v-on:input 也就是说貌似还需要显示触发一次
             }
         }
     });
