@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+
+
+<section id="example">
+    <child message="hello!"></child>
+    <!-- HTML 特性是不区分大小写的。所以，当使用的不是字符串模板时，camelCase (驼峰式命名) 的 prop 需要转换为相对应的 kebab-case (短横线分隔式命名)： -->
+    <child2 zx-message="haloa!"></child2>
+
+    <input type="text" v-model="parentMsg">
+    <child3 v-bind:zx-message="parentMsg"></child3>
+
+    <!-- 如果你想把一个对象的所有属性作为 prop 进行传递，可以使用不带任何参数的 v-bind (即用 v-bind 而不是 v-bind:prop-name)。例如，已知一个对象： -->
+    <child4 v-bind="todo"></child4>
+
+    <!-- 因为它是一个字面量 prop，它的值是字符串 "1" 而不是一个数值。如果想传递一个真正的 JavaScript 数值，则需要使用 v-bind，从而让它的值被当作 JavaScript 表达式计算： -->
+    <!-- 即一个是字符串，一个是表达式 -->
+    <!-- 这样是传递了一个字符串 -->
+    <child5 some-prop="1"></child5>
+    <!-- 这样才是传递了一个数值 -->
+    <child5 v-bind:some-prop="1"></child5>
+    <!-- 这是字符串 -->
+    <child5 v-bind:some-prop="'1'"></child5>
+
+</section>
+
+
+
+<script>
+    // 在 Vue 中，父子组件的关系可以总结为 prop 向下传递，事件向上传递。父组件通过 prop 给子组件下发数据，子组件通过事件给父组件发送消息。
+    // 组件实例的作用域是孤立的。这意味着不能 (也不应该) 在子组件的模板内直接引用父组件的数据。父组件的数据需要通过 prop 才能下发到子组件中。
+    Vue.component('child', {
+        props: ['message'], // 就像 data 一样，prop 也可以在模板中使用,同样也可以在 vm 实例中通过 this.message 来使用
+        template: '<span>{{ message }}</span>'
+    });
+
+    Vue.component('child2', {
+        props: ['zxMessage'],
+        template: '<p>{{ zxMessage }}</p>'
+    });
+
+    Vue.component('child3', {
+        props: ['zxMessage'],
+        template: '<p>{{ zxMessage }}</p>'
+    });
+
+    Vue.component('child4', {
+        props: ['text', 'isComplete'],
+        template: '<div><p>{{ text }}</p><p>{{ isComplete }}</p></div>'
+    });
+
+    Vue.component('child5', {
+        props: ['someProp'],
+        template: '<div>{{ typeof(someProp) }}</div>'
+    });
+
+    var vm = new Vue({
+        el: '#example',
+        data: {
+            parentMsg: '',
+            todo: {
+                text: 'lalalalala',
+                isComplete: false
+            }
+        }
+    })
+
+
+</script>
+
+</body>
+</html>
