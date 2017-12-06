@@ -27,6 +27,10 @@
     <br>
     <input type="text" v-model="price">
 
+    <!-- 自定义组件的v-model -->
+    <br>
+    <p>{{ foo }}</p>
+    <zx-checkbox v-model="foo" value="some value"></zx-checkbox>
 
 
 </div>
@@ -86,14 +90,36 @@
         }
     });
 
+    Vue.component('zx-checkbox', {
+        model: { // 这里自定义v-model绑定的prop和event 但是注意注意这里是子组件自己的prop和event不是其内部的input的，要触发的话需要在内部inpu里写对应的处理
+            prop: 'checked',
+            event: 'change'
+        },
+        props: {
+            checked: Boolean, // 注意注意 这里仍然需要显示声明与model中prop对应的属性 这个属性时组件自己的不是内部的
+            value: String  // 这样就允许拿 `value` 这个 prop 做其它事了 这个value属性是组件自己的
+        },
+        template: '<span><input type="checkbox" ref="checkbox" v-bind:checked="checked" v-on:change="updateFoo($event.target.checked)"></span>', // 这里把组件的checked属性和内部的input绑定 触发事件也关联上 即input有没有checked由组件的checked属性决定，而组件的checked属性又是由外部传入的foo决定
+        data: function(){
+            return {
 
+            }
+        },
+        methods: {
+            updateFoo: function(arg){
+                alert(this.value);
+                this.$emit('change', arg);
+            }
+        }
+    });
 
 
     new Vue({
         el: '#example',
         data: {
             total: 0,
-            price: 100
+            price: 100,
+            foo: true
         },
         methods: {
             incremnetTotal: function(){
