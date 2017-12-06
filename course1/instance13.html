@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+
+<section id="example">
+    <input type="button" @click="handleRandom" value="切换">
+    <input type="button" @click="currentView = school" value="school">
+    <!-- 如果把切换出去的组件保留在内存中，可以保留它的状态或避免重新渲染。为此可以添加一个 keep-alive 指令参数： -->
+    <!-- 有无keep-alive对比 -->
+    <component :is="currentView"></component>
+    <br>
+    <keep-alive>
+        <component :is="currentView"></component>
+    </keep-alive>
+</section>
+
+
+
+<script>
+
+
+
+    // 通过使用保留的 <component> 元素，动态地绑定到它的 is 特性，我们让多个组件可以使用同一个挂载点，并动态切换：
+
+    var vm = new Vue({
+        el: '#example',
+        data: {
+            school: {
+                template: '<p>我是school</p>'
+            },
+            randomArr: ['home', 'posts', 'archive'],
+            currentView: 'home' // 如果是字符串就对应components属性的key，如果是对象就是一个组件对象（有template属性）
+        },
+        methods: {
+            handleRandom: function(){
+                var num = Math.round(Math.random()*2);
+                this.currentView = this.randomArr[num]
+            }
+        },
+        components: {
+            home: {
+                template: '<div><p>我是home{{ count }}</p><input type="button" @click="count+=1" value="+1"></div>',
+                data: function(){
+                    return {
+                        count: 0
+                    }
+                }
+            },
+            posts: {
+                template: '<div><p>我是posts{{ count }}</p><input type="button" @click="count+=1" value="+1"></div>',
+                data: function(){
+                    return {
+                        count: 0
+                    }
+                }
+            },
+            archive: {
+                template: '<div><p>我是archive{{ count }}</p><input type="button" @click="count+=1" value="+1"></div>',
+                data: function(){
+                    return {
+                        count: 0
+                    }
+                }
+            }
+        }
+    })
+
+
+</script>
+</body>
+</html>

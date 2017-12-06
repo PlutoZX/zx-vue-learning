@@ -17,9 +17,14 @@
         <br>
         <br>
         <br>
-        <br>
-        <br>
         <zx-child3></zx-child3>
+        <br>
+        <br>
+        <br>
+        <zx-child5></zx-child5>
+        <br>
+        <br>
+        <br>
 
 
     </section>
@@ -93,12 +98,39 @@
 
 
 
+    // 作用域插槽是一种特殊类型的插槽，用作一个 (能被传递数据的) 可重用模板，来代替已经渲染好的元素。
+    Vue.component('zx-child4', {
+        template: '\
+            <div class="child4">\
+                <slot text="hello from child"></slot>\
+            </div>\
+        '
+    });
+
+    // 在父级中，具有特殊特性 slot-scope 的 <template> 元素必须存在，表示它是作用域插槽的模板。slot-scope 的值将被用作一个临时变量名，此变量接收从子组件传递过来的 prop 对象：
+    Vue.component('zx-child5', {
+        template: '\
+            <div class="parent">\
+                <zx-child4>\
+                    <template slot-scope="props">\
+                        <span>hello from parent</span>\
+                        <span>{{ props.text }}</span>\
+                    </template>\
+                </zx-child4>\
+            </div>\
+        '
+    });
+
+
+
 
 
 
     var vm = new Vue({
         el: '#example',
-
+        data: {
+            items: [{text: 'first'},{text: 'second'},{text: 'third'}]
+        }
     })
 
 
