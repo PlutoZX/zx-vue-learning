@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+
+
+    <section id="example">
+
+        <zx-child0></zx-child0>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <zx-child3></zx-child3>
+
+
+    </section>
+
+
+
+
+
+
+
+<script>
+
+    // 父组件模板的内容在父组件作用域内编译；子组件模板的内容在子组件作用域内编译。
+    // 父组件模板并不感知子组件的状态。
+
+    // 注意注意基础知识，js字符串换行的反斜杠语法，反斜杠换行不能空行
+
+    Vue.component('zx-child1', {
+        template: '\
+            <div>\
+                <h2>我是子组件标题</h2>\
+                <slot>\
+                    只有在没有分发内容时才会显示的备用内容\
+                </slot>\
+            </div>\
+        '
+    });
+
+    Vue.component('zx-child0', {
+        template: '\
+            <div>\
+                <h1>我是父组件标题</h1>\
+                <zx-child1>\
+                    <p>这是一些初始内容</p>\
+                    <p>这是更多更多初始内容</p>\
+                </zx-child1>\
+            </div>\
+        '
+    });
+
+
+
+    // 具名插槽定点插入内容，匿名插槽是默认插槽，作为找不到匹配的内容片段的备用插槽
+    Vue.component('zx-child2', {
+        template: '\
+            <div class="container">\
+                <header>\
+                    <slot name="header"></slot>\
+                </header>\
+                <main>\
+                    <slot></slot>\
+                </main>\
+                <footer>\
+                    <slot name="footer"></slot>\
+                </footer>\
+            </div>\
+        \
+        '
+    });
+
+    Vue.component('zx-child3', {
+        template: '\
+            <zx-child2>\
+                <h1 slot="header">这是匹配header的内容片段</h1>\
+                <p>这是没有匹配特定插槽的内容片段</p>\
+                <p>这是更多的没有匹配特定插槽的内容片段</p>\
+                <p slot="footer">这是匹配footer的内容片段</p>\
+            </zx-child2>\
+        '
+    });
+
+
+
+
+
+
+    var vm = new Vue({
+        el: '#example',
+
+    })
+
+
+
+</script>
+</body>
+</html>

@@ -7,25 +7,50 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <script src="./vue-2.5.8.js"></script>
+    <script src="./vuex-3.0.1.js"></script>
 </head>
 <body>
-<section id="example">
+<section id="example1">
 
 </section>
 
+<section id="example2">
+
+</section>
+
+
 <script>
 
-
-
-
-
-    var vm = new Vue({
-        el: '#example',
-        data: {
-
+    var store = {
+        debug: true,
+        state: {
+            message: 'Hello!'
         },
-        methods: {
+        setMessageAction: function(newValue){
+            if(this.debug) console.log('setMessageAction triggered');
+            this.state.message = newValue;
+        },
+        clearMessageAction: function(){
+            if(this.debug) console.log('clearMessageAction triggered');
+            this.state.message = '';
+        }
 
+    };
+
+    var vm1 = new Vue({
+        el: '#example1',
+        data: {
+            privateState: {},
+            sharedState: store.state
+        }
+    });
+
+
+    var vm2 = new Vue({
+        el: '#example2',
+        data: {
+            privateState: {},
+            sharedState: store.state
         }
     })
 </script>
