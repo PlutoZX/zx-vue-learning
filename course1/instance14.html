@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+
+<section id="example">
+    <!-- 可复用组件调用的基本形式 -->
+    <zx-reuse
+        :foo = "baz"
+        :bar = "qux"
+        @event-a = "doThis"
+        @event-b = "doThat"
+        style="width: 200px"
+    >
+        <img slot="icon" src="" alt="">
+        <p slot="main-text">hello!</p>
+    </zx-reuse>
+    <br>
+    <br>
+    <br>
+    <!-- 尽管有 prop 和事件，但是有时仍然需要在 JavaScript 中直接访问子组件。为此可以使用 ref 为子组件指定一个引用 ID。 -->
+    <zx-child1 ref="child1"></zx-child1>
+    <br>
+    <br>
+    <br>
+    <!-- 这是个异步组件 -->
+    <zx-child2></zx-child2>
+
+
+
+
+</section>
+
+
+
+
+<script>
+
+    // 但是可复用组件应当定义一个清晰的公开接口，同时也不要对其使用的外层数据作出任何假设。
+    // Vue 组件的 API 来自三部分——prop、事件和插槽：
+    // Prop 允许外部环境传递数据给组件；
+    // 事件允许从组件内触发外部环境的副作用；
+    // 插槽允许外部环境将额外的内容组合在组件中。
+    Vue.component('zx-reuse', {
+        template: '\
+            <div @click="selfEventa" @mouseout="selfEventb">\
+                <slot name="icon">这里放icon</slot>\
+                <slot name="main-text">这里放主文本</slot>\
+            </div>\
+        ',
+        props: ['foo', 'bar'], // 从属性传入的数据，放在props里而不是data
+        data: function(){
+            return {
+                selffoo: this.foo, // 取props中的值直接this.attr 不能 this.props.attr
+                selfbar: this.bar
+            }
+        },
+        methods: {
+            selfEventa: function(){
+                this.$emit('event-a');
+            },
+            selfEventb: function(){
+                this.$emit('event-b');
+            }
+        }
+
+    });
+
+
+    Vue.component('zx-child1', {
+        template: '<div>lalalalala</div>'
+    });
+
+
+    // 异步组件
+    Vue.component('zx-child2', function(resolve, reject){
+        setTimeout(function(){
+            // 将组件定义传入 resolve 回调函数
+            resolve({
+                template: '<div>我是异步产生的呦</div>'
+            })
+        },1800)
+    });
+
+
+
+    var vm = new Vue({
+        el: '#example',
+        data: {
+            baz: 'lalala',
+            qux: 'dududu',
+        },
+        methods: {
+            doThis: function(){alert(1)},
+            doThat: function(){alert(2)}
+        }
+    });
+
+
+    // 根据子元素的ref表示去获取元素
+    // $refs 只在组件渲染完成后才填充，并且它是非响应式的。它仅仅是一个直接操作子组件的应急方案——应当避免在模板或计算属性中使用 $refs。
+    var child = vm.$refs.child1;
+    console.log(child);
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
