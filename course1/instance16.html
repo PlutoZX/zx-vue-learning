@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+
+    <style>
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity .5s;
+        }
+        .fade-enter, .fade-leave-to {
+            opacity: 0;
+        }
+
+
+        .slide-fade-enter-active {
+            transition: all .8s linear;
+        }
+        .slide-fade-leave-active {
+            transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+        }
+        .slide-fade-enter, .slide-fade-leave-to {
+            transform: translateX(30px);
+            opacity: 0;
+        }
+
+
+        .bounce-enter-active {
+            animation: bounce-in .5s;
+        }
+        .bounce-leave-active {
+            animation: bounce-in .5s reverse;
+        }
+        @keyframes bounce-in {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.5);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+
+
+</head>
+<body>
+
+
+
+    <section id="example">
+        <button @click="show = !show">Toogle</button>
+        <transition name="fade">
+            <p v-if="show">你看见我了</p>
+        </transition>
+    </section>
+
+
+    <section id="example2">
+        <button @click="show = !show">Toogle</button>
+        <transition name="slide-fade">
+            <p v-if="show">啦啦啦啦啦啦啦啦啊德玛西亚</p>
+        </transition>
+    </section>
+
+
+    <div id="example3">
+        <button @click="show = !show">Toogle</button>
+        <transition name="bounce">
+            <p v-if="show">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis enim </p>
+        </transition>
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <script>
+
+    // 对于这些在 enter/leave 过渡中切换的类名，v- 是这些类名的前缀。使用 <transition name="my-transition"> 可以重置前缀，比如 v-enter 替换为 my-transition-enter。
+
+    var vm = new Vue({
+        el: '#example',
+        data: {
+            show: true
+        }
+    });
+
+    var vm2 = new Vue({
+        el: '#example2',
+        data: {
+            show: true
+        }
+    });
+
+    var vm3 = new Vue({
+        el: '#example3',
+        data: {
+            show: true
+        }
+    })
+
+
+
+</script>
+</body>
+</html>
