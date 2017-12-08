@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+
+
+
+<script>
+
+    // 定义一个混合对象
+    var zxMixin = {
+        created: function(){    // 第二次弹窗是他的，不过是在组件里调用的，因为hello方法同名，实际调用的是组件自己的hello
+            this.hello()
+        },
+        methods: {
+            hello: function(){
+                console.log('hello from mixin')
+            }
+        }
+    };
+
+
+
+    // 定义一个使用混合对象的组件构造函数
+    // 注意：Vue.extend() 也使用同样的策略进行合并。 下面那两句
+    var ZxComponent = Vue.extend({
+        mixins: [zxMixin]
+    });
+    var vm = new ZxComponent();     // 第一次弹窗是他的，弹出的是混合对象的hello
+
+
+    // 同名钩子函数将混合为一个数组，因此都将被调用。另外，混合对象的 钩子将在组件自身钩子 之前 调用 如这里的created
+    // 值为对象的选项，例如 methods, components 和 directives，将被混合为同一个对象。两个对象键名冲突时，取 组件对象 的键值对。如这里的hello
+    var vm2 = new Vue({
+        mixins: [zxMixin],
+        created: function(){    // 第三次是组件自己的
+            console.log('我是组件自己的')
+        },
+        methods: {
+            hello: function(){
+                console.log('fello from selfroot')
+            }
+        }
+    });
+
+
+    // 也可以全局注册混合对象。注意使用！ 一旦使用全局混合对象，将会影响到 所有 之后创建的 Vue 实例。使用恰当时，可以为自定义对象注入处理逻辑。
+    Vue.mixin({
+        created: function(){
+            var zxOption = this.$options.zxOption;
+            if(zxOption){
+                console.log(zxOption)
+            }
+        }
+    });
+    var vm3 = new Vue({
+        zxOption: 'Iam zxOption'
+    })
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
