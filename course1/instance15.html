@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+</head>
+<body>
+
+<section id="root">
+
+
+    <!-- 当你仔细看时，会发现在渲染树上这两个组件同时为对方的父节点和子节点 -->
+    <zx-child1 :folder="folder"></zx-child1>
+
+
+    <zx-child3></zx-child3>
+
+    <zx-child4></zx-child4>
+
+
+</section>
+
+<script type="text/x-template" id="hello-world-template">
+    <p>hello hello hello </p>
+</script>
+
+
+<script>
+
+    Vue.component('zx-child1', {
+        template: '\
+            <p>\
+                <span>{{ folder.name }}</span>\
+                <zx-child2 :children="folder.children"></zx-child2>\
+            </p>\
+        ',
+        props: ['folder']
+    });
+
+
+    Vue.component('zx-child2', {
+        template: '\
+            <ul>\
+                <li v-for="child in children">\
+                    <zx-child1 v-if="child.children" :folder="child"></zx-child1>\
+                    <span v-else>{{ child.name }}</span>\
+                </li>\
+            </ul>\
+        ',
+        props: ['children']
+    });
+
+
+    // 使用模板的组件
+    Vue.component('zx-child3', {
+        template: '#hello-world-template'
+    });
+
+    // 包含很多静态内容的组件，可以使用v-once将渲染结果存储起来，降低渲染开销
+    Vue.component('zx-child4', {
+        template: '\
+            <p v-once>\
+                <span>很多很多很多静态内容</span>\
+            </p>\
+        '
+    });
+
+
+    var vm = new Vue({
+        el: '#root',
+        data: {
+            folder: {
+                name: '我擦真绕',
+                children: [
+                    {
+                        name: '父数据1', children: [
+                            { name: '子数据1'},
+                            { name: '子数据2'},
+                            { name: '子数据3', children: [{name: '孙数据1'}]}
+                        ]
+                    },
+                    {
+                        name: '父数据2'
+                    }
+                ]
+            }
+        }
+    })
+
+
+
+    //为了解释为什么会报错，简单的将上面两个组件称为 A 和 B。模块系统看到它需要 A，但是首先 A 需要 B，但是 B 需要 A，而 A 需要 B，循环往复。因为不知道到底应该先解析哪个，所以将会陷入无限循环。要解决这个问题，我们需要在其中一个组件中告诉模块化管理系统：“A 虽然最后会用到 B，但是不需要优先导入 B”。
+
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
