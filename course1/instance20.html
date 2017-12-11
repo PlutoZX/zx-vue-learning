@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+    <script src="./vuex-3.0.1.js"></script>
+</head>
+<body>
+
+
+<section id="example">
+    <zx-child></zx-child>
+</section>
+
+
+
+
+
+<script>
+    // Action 类似于 mutation，不同在于：
+    // Action 提交的是 mutation，而不是直接变更状态。
+    // Action 可以包含任意异步操作。
+
+
+
+    const store = new Vuex.Store({
+        state: {
+            count: 0
+        },
+        mutations: {
+            increment(state){
+                state.count++;
+            }
+        },
+        actions: {
+            increment(context){ // Action 函数接受一个与 store 实例具有相同方法和属性的 context 对象
+                context.commit('increment');
+            },
+            incrementAsync(context){
+                return new Promise((resolve, reject)=>{ // store.dispatch 可以处理被触发的 action 的处理函数返回的 Promise，并且 store.dispatch 仍旧返回 Promise 这就是说在dispatch action的时候可以用then
+                    setTimeout(()=>{
+                        context.commit('increment');
+                        resolve();
+                    }, 1000)
+                });
+            },
+            incrementAsyncAfter(context){ // 在一个action中等待另一个action完成再执行commit 用promise
+                return context.dispatch('incrementAsync').then(()=>{
+                    context.commit('increment');
+                })
+            }
+        }
+    });
+
+
+
+
+
+
+    Vue.component('zx-child',{
+        template: `<div @click="incrementAsyncAfter">{{ count }}</div>`,
+        data: function(){
+            return {}
+        },
+        computed: {
+            count(){
+                return this.$store.state.count;
+            }
+        },
+        methods: {
+            increment(){
+                this.$store.dispatch('increment');  // Action 通过 store.dispatch 方法触发：
+            },
+            incrementAsync(){
+                this.$store.dispatch('incrementAsync').then(()=>{
+                    alert(1);
+                })
+            },
+            incrementAsyncAfter(){
+                this.$store.dispatch('incrementAsyncAfter').then(()=>{
+                    alert(1);
+                })
+            }
+        }
+    });
+
+
+    // 一个 store.dispatch 在不同模块中可以触发多个 action 函数。在这种情况下，只有当所有触发函数完成后，返回的 Promise 才会执行。
+
+
+
+    var vm = new Vue({
+        el: '#example',
+        store
+    })
+
+
+
+
+
+
+</script>
+</body>
+</html>
