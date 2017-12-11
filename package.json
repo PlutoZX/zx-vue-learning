@@ -1,0 +1,24 @@
+{
+  "name": "zx-vue-learning",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "vue": "^2.5.9",
+    "vuex": "^3.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PlutoZX/zx-vue-learning.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PlutoZX/zx-vue-learning/issues"
+  },
+  "homepage": "https://github.com/PlutoZX/zx-vue-learning#readme"
+}

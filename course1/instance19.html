@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue-2.5.8.js"></script>
+    <script src="./vuex-3.0.1.js"></script>
+</head>
+<body>
+
+
+
+    <section id="example">
+
+        <zx-child></zx-child>
+
+    </section>
+
+
+
+
+
+<script>
+
+
+
+    // Vuex 通过 store 选项，提供了一种机制将状态从根组件“注入”到每一个子组件中（需调用 Vue.use(Vuex)）
+    // 模块化构建需要声明
+    Vue.use(Vuex);
+
+
+    // state，驱动应用的数据源；
+    // view，以声明方式将 state 映射到视图；
+    // actions，响应在 view 上的用户输入导致的状态变化。
+
+
+    const store = new Vuex.Store({
+        state: {
+            count: 0,
+            todos: [
+                {id: 1, text: 'todo1', done: true},
+                {id: 2, text: 'todo2', done: false}
+            ]
+        },
+        getters: {
+            doneTodos: state => {   // Getter 接受 state 作为其第一个参数：
+                return state.todos.filter(todo => todo.done);
+            },
+            doneTodosCount: (state, getters) => {   // Getter 也可以接受其他 getter 作为第二个参数：
+                return getters.doneTodos.length;
+            }
+        },
+        mutations: {
+            increment (state){
+                state.count++
+            }
+        }
+    });
+
+
+
+
+
+
+    Vue.component('zx-child', {
+        template: '<div @click="increment">{{ count }}</div>',
+        data: function(){
+            return {
+
+            }
+        },
+        computed: {
+            count(){
+                return this.$store.state.count
+            }
+        },
+        methods: {
+            increment () {
+                store.commit('increment')
+            }
+        }
+    });
+
+
+
+    var vm = new Vue({
+        el: '#example',
+        store   // 通过在根实例中注册 store 选项，该 store 实例会注入到根组件下的所有子组件中，且子组件能通过 this.$store 访问到。
+    });
+
+
+</script>
+</body>
+</html>
