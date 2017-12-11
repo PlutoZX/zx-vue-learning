@@ -37,6 +37,10 @@
     // actions，响应在 view 上的用户输入导致的状态变化。
 
 
+    // Mutation 必须是同步函数 导致的状态变更都应该在此刻(commit时)完成。
+    // mutation 都是同步事务
+
+
     const store = new Vuex.Store({
         state: {
             count: 0,
@@ -54,8 +58,8 @@
             }
         },
         mutations: {
-            increment (state){
-                state.count++
+            increment (state, payload){
+                state.count += payload.amount;
             }
         }
     });
@@ -79,7 +83,9 @@
         },
         methods: {
             increment () {
-                store.commit('increment')
+                this.$store.commit('increment', {
+                    amount: 10
+                })
             }
         }
     });
